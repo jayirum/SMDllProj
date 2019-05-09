@@ -71,6 +71,7 @@ __published:	// IDE-managed Components
 	TButton *Button2;
 	TLabel *Label13;
 	TEdit *edSMAllRemoveDest;
+	TButton *Button3;
 	void __fastcall Timer1Timer(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall Button9Click(TObject *Sender);
@@ -85,6 +86,7 @@ __published:	// IDE-managed Components
 	void __fastcall Button28Click(TObject *Sender);
 	void __fastcall Button1Click(TObject *Sender);
 	void __fastcall Button2Click(TObject *Sender);
+	void __fastcall Button3Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TfmMain(TComponent* Owner);

@@ -2,6 +2,10 @@ enum  TCMDType {cmtIOCPEvent, cmtAccept, cmtDisconnect, cmtTR_CODE};
 enum  TR_CODE {ctDestAdd, ctDestDel, ctDestPushSend, ctDestRRSend, ctDestRRSendResponse, ctUserID, ctDisconnect, ctUserConnectOk, ctUsersAlready, ctClientUniqKey};
 enum  TDeliveryMode {Delivery_RR, Delivery_RR_Response, Delivery_Push};
 
+const MESSAGE_TO_SEND = 0;
+const RECEIVED_MESSAGE = 1;
+const RESPOND_MESSAGE = 2;
+
 
 typedef long int (__stdcall *TInitialize)();
 TInitialize Initialize;
@@ -15,15 +19,23 @@ TSMClientDisconnect SMClientDisconnect;
 typedef bool (__stdcall *TSMClientIsConnected)(int index);
 TSMClientIsConnected SMClientIsConnected;
 
-typedef long int (__stdcall *TSMSetMessageParameters)(int index, TDeliveryMode DeliveryMode,
-char* Destination, char* Msg);
+typedef long int (__stdcall *TSMSetMessageParameters)(int index, int messtype,
+TDeliveryMode DeliveryMode, char* Destination, char* Msg);
 TSMSetMessageParameters SMSetMessageParameters;
 
-typedef long int (__stdcall *TSMSetMessageField)(int index, char* FieldName,
-char* Data, int DataSize);
-TSMSetMessageField SMSetMessageField;
+typedef long int (__stdcall *TSMSetMessageBinaryField)(int index, int messtype,
+char* FieldName, char* Data, int DataSize);
+TSMSetMessageBinaryField SMSetMessageBinaryField;
 
-typedef long int (__stdcall *TSMSendMessage)(int index);
+typedef long int (__stdcall *TSMSetMessageStringField)(int index, int messtype,
+char* FieldName, char* Str);
+TSMSetMessageStringField SMSetMessageStringField;
+
+typedef long int (__stdcall *TSMSetMessageIntegerField)(int index, int messtype,
+char* FieldName, int Val);
+TSMSetMessageIntegerField SMSetMessageIntegerField;
+
+typedef long int (__stdcall *TSMSendMessage)(int index, int messtype);
 TSMSendMessage SMSendMessage;
 
 typedef char* (__stdcall *TSMGetClientUniqKey)(int index);
@@ -47,8 +59,14 @@ TSMGetReceivedCnt SMGetReceivedCnt;
 typedef long int (__stdcall *TSMSetWorkEventCallBack)(int index, char* CallBackProc);
 TSMSetWorkEventCallBack SMSetWorkEventCallBack;
 
-typedef char* (__stdcall *TSMMessageGetBinaryFieldValue)(int index, char* FieldName);
+typedef char* (__stdcall *TSMMessageGetBinaryFieldValue)(int index, int messtype, char* FieldName);
 TSMMessageGetBinaryFieldValue SMMessageGetBinaryFieldValue;
+
+typedef char* (__stdcall *TSMMessageGetStringFieldValue)(int index, int messtype, char* FieldName);
+TSMMessageGetStringFieldValue SMMessageGetStringFieldValue;
+
+typedef int (__stdcall *TSMMessageGetIntegerFieldValue)(int index, int messtype, char* FieldName);
+TSMMessageGetIntegerFieldValue SMMessageGetIntegerFieldValue;
 
 typedef long int (__stdcall *TSMGetObjectsNumber)();
 TSMGetObjectsNumber SMGetObjectsNumber;
@@ -58,6 +76,14 @@ TSMGetMaximumObjectsNumber SMGetMaximumObjectsNumber;
 
 typedef long int (__stdcall *TSMCreateInstance)();
 TSMCreateInstance SMCreateInstance;
+
+typedef int (__stdcall *TSMMessageGetDeliveryType)(int index, int messtype);
+TSMMessageGetDeliveryType SMMessageGetDeliveryType;
+
+typedef int (__stdcall *TSMSendResponse)(int index, int messtype);
+TSMSendResponse SMSendResponse;
+
+
 
 //function SMSetMessageParameters(DeliveryMode : TDeliveryMode; Destination : PChar; Msg : PChar) : integer;
 //function SMSetMessageField(FieldName : PChar; Data : Pointer; DataSize : integer) : integer; stdcall;

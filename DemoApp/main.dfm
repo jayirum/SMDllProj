@@ -1,7 +1,7 @@
 object fmMain: TfmMain
   Left = 0
   Top = 0
-  Caption = 'Test APP for SM Client/Server DLL'
+  Caption = 'C++ Builder demo for TestMessage.dll'
   ClientHeight = 684
   ClientWidth = 645
   Color = clBtnFace
@@ -23,11 +23,9 @@ object fmMain: TfmMain
     ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 657
     object TabSheet2: TTabSheet
       Caption = 'Prototype #2 with many instances'
       ImageIndex = 1
-      ExplicitHeight = 629
       object lblObjNumber: TLabel
         Left = 240
         Top = 37
@@ -449,7 +447,7 @@ object fmMain: TfmMain
           ParentFont = False
         end
         object Button25: TButton
-          Left = 15
+          Left = 19
           Top = 32
           Width = 113
           Height = 25
@@ -520,6 +518,15 @@ object fmMain: TfmMain
           Width = 50
           Height = 21
           TabOrder = 8
+        end
+        object Button3: TButton
+          Left = 480
+          Top = 72
+          Width = 75
+          Height = 25
+          Caption = 'Clear List'
+          TabOrder = 9
+          OnClick = Button3Click
         end
       end
       object edClientIP: TEdit

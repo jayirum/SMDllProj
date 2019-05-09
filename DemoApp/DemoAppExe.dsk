@@ -64,9 +64,9 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=C:\SEO\ODesk\SMDLLProject\DemoApp\main.cpp
-CursorX=32
-CursorY=154
-TopLine=145
+CursorX=30
+CursorY=326
+TopLine=321
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -75,9 +75,9 @@ EditViewName=C:\SEO\ODesk\SMDLLProject\DemoApp\main.cpp
 [View1]
 CustomEditViewType=TEditView
 Module=C:\SEO\ODesk\SMDLLProject\DemoApp\SMDataTypes.h
-CursorX=27
-CursorY=39
-TopLine=19
+CursorX=37
+CursorY=78
+TopLine=55
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -143,14 +143,14 @@ Create=1
 Visible=1
 Docked=0
 State=2
-Left=-42
-Top=-77
-Width=7573
-Height=8404
+Left=0
+Top=0
+Width=6714
+Height=6625
 MaxLeft=-5
 MaxTop=-10
-MaxWidth=7573
-MaxHeight=8404
+MaxWidth=6714
+MaxHeight=6625
 ClientWidth=10000
 ClientHeight=9779
 BottomPanelSize=8861
@@ -271,11 +271,6 @@ LRDockWidth=1896
 Dockable=1
 StayOnTop=0
 SplitPos=111
-
-[PropInspDesignerSelection]
-ArrangeBy=Name
-SelectedItem=Caption,
-ExpandedItems=Anchors=0,BevelEdges=0,Constraints=0,Font=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,BorderIcons=0
 
 [ClassBrowserTool]
 PercentageSizes=1

@@ -25,7 +25,7 @@ __fastcall TfmMain::TfmMain(TComponent* Owner)
 int __fastcall TfmMain::InitDLL(void)
 {
 
-	HMODULE myDLL = LoadLibraryA("FirstDLL.dll");
+	HMODULE myDLL = LoadLibraryA("SmartMessage.dll");
 	if (myDLL <= 0)
 	{
 		ShowMessage("DLL not found !");
@@ -74,11 +74,27 @@ int __fastcall TfmMain::InitDLL(void)
 	  return -1;
 	}
 
-	SMSetMessageField = NULL;
-	SMSetMessageField = (TSMSetMessageField) GetProcAddress(myDLL, "SMSetMessageField");
-	if (SMSetMessageField == NULL)
+	SMSetMessageBinaryField = NULL;
+	SMSetMessageBinaryField = (TSMSetMessageBinaryField) GetProcAddress(myDLL, "SMSetMessageBinaryField");
+	if (SMSetMessageBinaryField == NULL)
 	{
-	  ShowMessage("SMSetMessageField function not found in the DLL !");
+	  ShowMessage("SMSetMessageBinaryField function not found in the DLL !");
+	  return -1;
+	}
+
+	SMSetMessageStringField = NULL;
+	SMSetMessageStringField = (TSMSetMessageStringField) GetProcAddress(myDLL, "SMSetMessageStringField");
+	if (SMSetMessageStringField == NULL)
+	{
+	  ShowMessage("SMSetMessageStringField function not found in the DLL !");
+	  return -1;
+	}
+
+	SMSetMessageIntegerField = NULL;
+	SMSetMessageIntegerField = (TSMSetMessageIntegerField) GetProcAddress(myDLL, "SMSetMessageIntegerField");
+	if (SMSetMessageIntegerField == NULL)
+	{
+	  ShowMessage("SMSetMessageIntegerField function not found in the DLL !");
 	  return -1;
 	}
 
@@ -130,6 +146,22 @@ int __fastcall TfmMain::InitDLL(void)
 	  return -1;
 	}
 
+	SMMessageGetStringFieldValue = NULL;
+	SMMessageGetStringFieldValue = (TSMMessageGetStringFieldValue) GetProcAddress(myDLL, "SMMessageGetStringFieldValue");
+	if (SMMessageGetStringFieldValue == NULL)
+	{
+	  ShowMessage("SMMessageGetStringFieldValue function not found in the DLL !");
+	  return -1;
+	}
+
+	SMMessageGetIntegerFieldValue = NULL;
+	SMMessageGetIntegerFieldValue = (TSMMessageGetIntegerFieldValue) GetProcAddress(myDLL, "SMMessageGetIntegerFieldValue");
+	if (SMMessageGetIntegerFieldValue == NULL)
+	{
+	  ShowMessage("SMMessageGetIntegerFieldValue function not found in the DLL !");
+	  return -1;
+	}
+
 	SMGetObjectsNumber = NULL;
 	SMGetObjectsNumber = (TSMGetObjectsNumber) GetProcAddress(myDLL, "SMGetObjectsNumber");
 	if (SMGetObjectsNumber == NULL)
@@ -177,6 +209,23 @@ int __fastcall TfmMain::InitDLL(void)
 	  ShowMessage("SMEventAllRemoveDestination function not found in the DLL !");
 	  return -1;
 	}
+
+	SMMessageGetDeliveryType = NULL;
+	SMMessageGetDeliveryType = (TSMMessageGetDeliveryType) GetProcAddress(myDLL, "SMMessageGetDeliveryType");
+	if (SMMessageGetDeliveryType == NULL)
+	{
+	  ShowMessage("SMMessageGetDeliveryType function not found in the DLL !");
+	  return -1;
+	}
+
+	SMSendResponse = NULL;
+	SMSendResponse = (TSMSendResponse) GetProcAddress(myDLL, "SMSendResponse");
+	if (SMSendResponse == NULL)
+	{
+	  ShowMessage("SMSendResponse function not found in the DLL !");
+	  return -1;
+	}
+
 
 	long int resi;
 	resi = Initialize();
@@ -291,19 +340,32 @@ void __fastcall TfmMain::Timer1Timer(TObject *Sender)
 long int __stdcall CallBackProc(int index, char* WorkThread, char* Message)
 {
 	char* fv;
+	char *p;
+	int resint;
 	//ShowMessage("Our CallBack func !");
 
-	fv = SMMessageGetBinaryFieldValue(index, (char * )fldFXExec);
+	fv = SMMessageGetBinaryFieldValue(index, RECEIVED_MESSAGE, (char * )fldFXExec);
 	TFutExec FutExec;
 	memcpy(&FutExec, fv, sizeof(FutExec));
 	//ShowMessage(FutExec.issue);
 
+	int delivmode = SMMessageGetDeliveryType(index, RECEIVED_MESSAGE);
+
 	//ShowMessage(FutExec.issue);
 	fmMain->ListBox2->Items->Add("Message received via instance " + IntToStr(index) + " !");
+	fmMain->ListBox2->Items->Add("Message Delivery Type : " + IntToStr(delivmode));
+	fmMain->ListBox2->Items->Add("----- BINARY FIELD -----");
 	fmMain->ListBox2->Items->Add("ISSUE : " + String(FutExec.issue));
 	fmMain->ListBox2->Items->Add("TIME : " + IntToStr(FutExec.time));
 
-    return 0;
+	p = SMMessageGetStringFieldValue(index, RECEIVED_MESSAGE, (char * ) fldHDMsg);
+	fmMain->ListBox2->Items->Add("STRING FIELD : " + AnsiString(p,strlen(p)+1));
+
+	resint = SMMessageGetIntegerFieldValue(index, RECEIVED_MESSAGE, (char * ) fldHDUserID);
+    //resint = 100;
+	fmMain->ListBox2->Items->Add("INTEGER FIELD : " + IntToStr(resint));
+
+	return 0;
 }
 
 
@@ -320,8 +382,12 @@ void __fastcall TfmMain::Button9Click(TObject *Sender)
 {
 	int resi = InitDLL();
 	edInitRes2->Text = IntToStr((int)resi);
-	Button11Click(NULL);
-    Button11Click(NULL);
+	if (resi == 0)
+	{
+		Button11Click(NULL);
+		Button11Click(NULL);
+	}
+
 }
 //---------------------------------------------------------------------------
 
@@ -364,8 +430,7 @@ void __fastcall TfmMain::Button23Click(TObject *Sender)
 void __fastcall TfmMain::Button24Click(TObject *Sender)
 {
 	int resi;
-	resi = SMSetMessageParameters(SelectedInstance, Delivery_Push,(char *) SISE_GW,(char *) MSG_MKT_FX_EXEC);
-	//ShowMessage("SMSetMessageParameters function return : " + IntToStr((int)resi));
+	resi = SMSetMessageParameters(SelectedInstance, MESSAGE_TO_SEND, Delivery_Push,(char *) SISE_GW,(char *) MSG_MKT_FX_EXEC);
 	edSetMess->Text = IntToStr((int)resi);
 }
 //---------------------------------------------------------------------------
@@ -399,7 +464,12 @@ void __fastcall TfmMain::Button26Click(TObject *Sender)
 	strcpy((char *) &FutExec.side, fvSide_BUY);
 
 	int resi;
-	resi = SMSetMessageField(SelectedInstance, (char * )fldFXExec,(char *) &FutExec, (int) sizeof(FutExec));
+	resi = SMSetMessageBinaryField(SelectedInstance, MESSAGE_TO_SEND, (char * )fldFXExec,(char *) &FutExec, (int) sizeof(FutExec));
+	resi = SMSetMessageStringField(SelectedInstance, MESSAGE_TO_SEND, (char * )fldHDMsg,(char *) "GETRESULT");
+	resi = SMSetMessageIntegerField(SelectedInstance, MESSAGE_TO_SEND, (char * )fldHDUserID, 2);
+
+//fldHDUserID
+
 	//ShowMessage("SMSetMessageField function return : " + IntToStr((int)resi));
 	edSetMessageField2->Text = IntToStr((int)resi);
 }
@@ -407,7 +477,7 @@ void __fastcall TfmMain::Button26Click(TObject *Sender)
 
 void __fastcall TfmMain::Button27Click(TObject *Sender)
 {
-	int resi = SMSendMessage(SelectedInstance);
+	int resi = SMSendMessage(SelectedInstance, MESSAGE_TO_SEND);
 	//ShowMessage("SMSendMessage function return : " + IntToStr((int)resi));
 	edSendMessage2->Text = IntToStr((int)resi);
 }
@@ -434,6 +504,12 @@ void __fastcall TfmMain::Button2Click(TObject *Sender)
 	int resi;
 	resi = SMEventAllRemoveDestination(SelectedInstance);
 	edSMAllRemoveDest->Text = IntToStr((int)resi);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfmMain::Button3Click(TObject *Sender)
+{
+ListBox2->Clear();
 }
 //---------------------------------------------------------------------------
 
